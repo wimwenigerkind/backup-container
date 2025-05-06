@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  backup-container:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./:/backup/source1:ro
+      - ./rclone:/root/.config/rclone
+    environment:
+      - TZ=Europe/Berlin
+      # Backup 1: Daily at 2 AM to S3 with Discord notification
+      - BACKUP_1_SCHEDULE=* * * * *
+      - BACKUP_1_SOURCE=/backup/source1
+      - BACKUP_1_DESTINATION=wdg1:wdg1/some-test
+      - BACKUP_1_RETENTION=7
+      - BACKUP_1_SHOUTRRR_URL=discord://webhookid/token
+      # Backup 2: Every 6 hours to SMB
+      #- BACKUP_2_SCHEDULE=0 */6 * * *
+      #- BACKUP_2_SOURCE=/backup/source2
+      #- BACKUP_2_DESTINATION=smb://user:pass@host/share/path
