@@ -29,14 +29,15 @@ env | while IFS= read -r line; do
         destination=$(env | grep "${var_prefix}DESTINATION" | cut -d'=' -f2-)
         retention=$(env | grep "${var_prefix}RETENTION" | cut -d'=' -f2-)
         shoutrrr_url=$(env | grep "${var_prefix}SHOUTRRR_URL" | cut -d'=' -f2-)
+        name=$(env | grep "${var_prefix}NAME" | cut -d'=' -f2-)
 
         if [ -z "$schedule" ] || [ -z "$source_dir" ] || [ -z "$destination" ]; then
             echo "Error: Backup ${backup_num} is missing required parameters"
             exit 1
         fi
 
-        echo "Adding backup job ${backup_num}: ${schedule} ${source_dir} → ${destination} (Retention: ${retention:-"unlimited"})"
-        echo "${schedule} /app/backup-scripts/backup.sh \"${source_dir}\" \"${destination}\" \"${retention}\" \"${shoutrrr_url}\" >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
+        echo "Adding backup job ${name} ${backup_num}: ${schedule} ${source_dir} → ${destination} (Retention: ${retention:-"unlimited"})"
+        echo "${schedule} /app/backup-scripts/backup.sh \"${source_dir}\" \"${destination}\" \"${retention}\" \"${shoutrrr_url}\" \"${name}\" >> /var/log/cron.log 2>&1" >> /etc/crontabs/root
     fi
 done
 

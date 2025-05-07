@@ -2,8 +2,9 @@
 
 SOURCE=$1
 DESTINATION=$2
-RETENTION_COUNT=$3  # Changed from RETENTION_DAYS
+RETENTION_COUNT=$3
 SHOUTRRR_URL=$4
+NAME=$5
 
 TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
 LOG_FILE="/tmp/backup_${TIMESTAMP}.log"
@@ -50,22 +51,13 @@ else
     STATUS="Failed with error code $EXIT_CODE"
 fi
 
-MESSAGE="Backup ${STATUS}
-- Source: ${SOURCE}
-- Destination: ${DEST_DIR}
-- Retention: ${RETENTION_DAYS:-"No"} rotation
-- Logs: $(cat "$LOG_FILE")"
+MESSAGE=$(printf "Backup %s\n Source: %s\n Destination: %s\n Retention: %s rotation" \
+  "$STATUS" "$SOURCE" "$DEST_DIR" "${RETENTION_COUNT:-No}")
 
 if [ -n "$SHOUTRRR_URL" ]; then
     echo "Sending notification..." >> "$LOG_FILE"
-    echo "Test"
-    echo "${SHOUTRRR_URL}"
-    echo "${MESSAGE}"
-    echo "${SHOUTRRR_URL}"
-    /usr/local/bin/shoutrrr send --message "{$MESSAGE}" --url "${SHOUTRRR_URL}" >> "$LOG_FILE" 2>&1
+    /usr/local/bin/shoutrrr send --message "${MESSAGE}" --url "${SHOUTRRR_URL}" --title "Name: ${NAME}" >> "$LOG_FILE" 2>&1
 fi
-
-cat "$LOG_FILE"
 
 echo "Backup completed: ${STATUS}"
 exit $EXIT_CODE
