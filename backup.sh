@@ -39,7 +39,7 @@ if [ -n "$RETENTION_COUNT" ] && [ "$RETENTION_COUNT" -gt 0 ]; then
         COUNT=$((COUNT + 1))
         if [ "$COUNT" -gt "$RETENTION_COUNT" ]; then
             echo "Deleting old backup: ${backup_dir}" >> "$LOG_FILE"
-            rclone purge "${DESTINATION}/${backup_dir}" >> "$LOG_FILE" 2>&1
+            rclone purge "${DESTINATION}/${NAME}/${backup_dir}" >> "$LOG_FILE" 2>&1
         fi
     done
 fi
